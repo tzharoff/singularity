@@ -25,3 +25,27 @@ export async function parkCard(cardId: string) {
   });
 }
 
+export async function assignDomain(
+  cardId: string,
+  domainId: string
+) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("No auth");
+
+  // 1. Mutate current state
+  await updateDoc(doc(db, "cards", cardId), {
+    domain: domainId,
+    updatedAt: serverTimestamp(),
+  });
+
+  // 2. Record the immutable event
+  await addDoc(collection(db, "cards", cardId, "events"), {
+    type: "UPDATED",
+    at: serverTimestamp(),
+    by: user.uid,
+    meta: { domain: domainId },
+  });
+}
+
+
+
