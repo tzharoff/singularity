@@ -1,10 +1,10 @@
-import './App.css'
+// App.tsx
+import AuthGate from "@/app/AuthGate";
 
 export default function App() {
   return (
-    <div>
+    <AuthGate>
       <h1>Singularity</h1>
-    </div>
+    </AuthGate>
   );
 }
-
