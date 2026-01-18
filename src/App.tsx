@@ -1,10 +1,11 @@
 // App.tsx
 import AuthGate from "@/app/AuthGate";
+import HomePage from "./pages/HomePage";
 
 export default function App() {
   return (
     <AuthGate>
-      <h1>Singularity</h1>
+      <HomePage />
     </AuthGate>
   );
 }

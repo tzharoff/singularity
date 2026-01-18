@@ -7,6 +7,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
+import type { CardStatus } from "./SingularityCard";
 
 
 export async function parkCard(cardId: string) {
@@ -47,5 +48,24 @@ export async function assignDomain(
   });
 }
 
+export async function setCardStatus(
+  cardId: string,
+  status: CardStatus
+) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("No auth");
+
+  await updateDoc(doc(db, "cards", cardId), {
+    status,
+    updatedAt: serverTimestamp(),
+  });
+
+  await addDoc(collection(db, "cards", cardId, "events"), {
+    type: "STATUS_CHANGED",
+    at: serverTimestamp(),
+    by: user.uid,
+    meta: { status },
+  });
+}
 
 

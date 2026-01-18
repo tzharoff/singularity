@@ -1,21 +1,29 @@
-// src/app/AuthGate.tsx
 import { useEffect, useState } from "react";
-import { signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import {
+  onAuthStateChanged
+} from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import AdminLogin from "@/app/AdminLogin";
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        await signInAnonymously(auth);
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setReady(true);
+      } else {
+        setReady(false);
       }
-      setReady(true);
     });
+
     return unsub;
   }, []);
 
-  if (!ready) return null;
+  if (!ready) {
+    return <AdminLogin onError={setError} error={error} />;
+  }
+
   return <>{children}</>;
 }
